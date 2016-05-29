@@ -162,6 +162,15 @@
 				{letter:'p', probability: 0.001139085, points: 10}
 			];
 			
+			var word = [];
+			
+			function lastLetter()
+			{
+				return word[word.length - 1];
+			}			
+			
+			var isValidWord = false;
+			
 			function randomLetter()
 			{
 				var rand = Math.random();
@@ -177,13 +186,6 @@
 					}
 				}
 				return letter;
-			}
-			
-			var word = [];
-			
-			function lastLetter()
-			{
-				return word[word.length - 1];
 			}
 			
 			$(function()
@@ -267,13 +269,15 @@
 				
 				function updateDictionary(word, kana)
 				{
+					isValidWord = false;
 					/*console.log(word, kana);*/
 					$('.sidebar .dictionary').html('');
 					if (word.length > 2 && !(/[a-z]/i).test(kana))
 					{
-						var search = rikaikun.wordSearch(kana, false, 10);
+						var search = rikaikun.wordSearch(kana, false, 15);
 						if (search != null && search.data.length > 0)
 						{
+							isValidWord = true;
 							for (var i = 0; i < search.data.length; i++)
 							{
 								var entry = search.data[i];
@@ -305,6 +309,17 @@
 					}
 				}
 				
+				function confirm()
+				{
+					var _word = word;
+					for(var i = 0; i < _word.length; i++)
+					{
+						$(_word[i]).remove();
+					}
+					_word.splice(0, _word.length);
+					updateColumns();
+				}
+				
 				$('.board').on('click', '.tile', function()
 				{
 					var tile = $(this);
@@ -314,8 +329,15 @@
 					{
 						if (tile[0] == _lastLetter[0])
 						{
-							//tile.removeClass('selected');
-							deselect(_word.splice(_word.length - 1, 1));
+							if (isValidWord)
+							{
+								confirm();
+							}
+							else
+							{
+								//tile.removeClass('selected');
+								deselect(_word.splice(_word.length - 1, 1));
+							}
 						}
 						else
 						{
