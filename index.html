@@ -1,0 +1,314 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+		<!--<script type="text/javascript" src="wanakana.js"></script>-->
+		<script type="text/javascript" src="toKana.js"></script>
+		<style>
+			*
+			{
+				box-sizing: border-box;
+			}
+			.game
+			{
+				border:1px solid black;
+				width:640px;
+				height:480px;
+			}
+			.sidebar
+			{
+				width:25%;
+				height:100%;
+				border:1px solid black;
+				margin-right:-4px;
+				display:inline-block;
+			}
+			.board
+			{
+				width:75%;
+				height:100%;
+				border:1px solid black;
+				position:relative;
+				display:inline-block;
+				/*display:inline-table;*/
+				vertical-align:top;
+				table-layout:fixed;
+			}
+			.column
+			{
+				width:14.28%;
+				/*height:100%;*/
+				/*display:table-cell;*/
+				display:inline-block;
+				/*margin-right:-4px;*/
+				border:1px solid black;
+				vertical-align:bottom;
+			}
+			
+			.spacer
+			{
+				width:100%;
+				height:7.24%;
+				border:1px solid red;
+				display:inline-block;
+			}
+			.tile
+			{
+				border:2px solid black;
+				display:inline-block;
+				height:12.5%;
+				width:100%;
+				padding:25%;
+				/*text-align:center;*/
+			}
+			.tile.selected
+			{
+				background:yellow;
+			}
+			/*.tile svg text
+			{
+				width:100%;
+				text-align:center;
+			}*/
+		</style>
+	</head>
+	<body>
+		<div class="templates" style="display:none">
+			<div class="tile">
+				<svg width="100%" height="100%" viewBox="0 0 13 15">
+					<text x="50%" y="13" text-anchor="middle"></text>
+				</svg>
+			</div>
+			<div class="column odd"><div class="spacer"></div></div>
+			<div class="column even"></div>
+		</div>
+		<div class="game">
+			<div class="sidebar">
+				<div class="word">
+					<svg width="100%" height="100%" viewBox="0 0 30 15">
+						<text x="50%" y="13" textLength="100%" lengthAdjust="spacingAndGlyphs" text-anchor="middle"></text>
+					</svg>
+				</div>
+			</div>
+			<div class="board">
+			</div>
+		</div>
+		<script>
+			var letters = [
+				{letter:'a', probability: 0.138968333, points: 1},
+				{letter:'o', probability: 0.108195018, points: 1},
+				{letter:'i', probability: 0.104272961, points: 1},
+				{letter:'u', probability: 0.087630851, points: 2},
+				{letter:'n', probability: 0.085601805, points: 2},
+				{letter:'e', probability: 0.068102514, points: 3},
+				{letter:'k', probability: 0.065016332, points: 3},
+				{letter:'t', probability: 0.058419475, points: 3},
+				{letter:'s', probability: 0.057478706, points: 3},
+				{letter:'r', probability: 0.049367439, points: 4},
+				{letter:'h', probability: 0.047018794, points: 4},
+				{letter:'m', probability: 0.028580373, points: 5},
+				{letter:'d', probability: 0.026679167, points: 5},
+				{letter:'g', probability: 0.022093326, points: 5},
+				{letter:'y', probability: 0.0151277, points: 6},
+				{letter:'j', probability: 0.008953697, points: 7},
+				{letter:'c', probability: 0.008094877, points: 7},
+				{letter:'b', probability: 0.008080126, points: 7},
+				{letter:'w', probability: 0.004420304, points: 8},
+				{letter:'z', probability: 0.00441047, points: 8},
+				{letter:'f', probability: 0.002348645, points: 9},
+				{letter:'p', probability: 0.001139085, points: 10}
+			];
+			
+			function randomLetter()
+			{
+				var rand = Math.random();
+				var base = 0;
+				var letter = null;
+				for (var i = 0, _letters = letters; i < _letters.length; i++)
+				{
+					letter = _letters[i];
+					base += letter.probability;
+					if (rand < base)
+					{
+						break;
+					}
+				}
+				return letter;
+			}
+			
+			var word = [];
+			
+			function lastLetter()
+			{
+				return word[word.length - 1];
+			}
+			
+			$(function()
+			{
+				var tileTemplate = $('.templates .tile');
+				var oddColumnTemplate = $('.templates .column.odd');
+				var evenColumnTemplate = $('.templates .column.even');
+				
+				var board = $('.board');
+				
+				for(var n = 1; n < 8; n++)
+				{
+					var newColumn = null;
+					if(n % 2 == 1)
+					{
+						newColumn = oddColumnTemplate.clone();
+					}
+					else
+					{
+						newColumn = evenColumnTemplate.clone();
+					}
+					
+					newColumn.attr('data-column', n);
+					board.append(newColumn);
+				}
+				
+				function updateColumns()
+				{
+					$('.column').each(function()
+					{
+						var column = $(this);
+						var columnId = column.attr('data-column');
+						var tileCount = column.find('.tile').length;
+						
+						var targetCount = 7;
+						if (column.hasClass('even'))
+						{
+							targetCount = 8;
+						}
+						for(var i = 0; i < targetCount - tileCount; i++)
+						{
+							var newTile = tileTemplate.clone();
+							var letter = randomLetter();
+							newTile.attr('data-letter', letter.letter);
+							newTile.attr('data-points', letter.points);
+							newTile.find('svg text').html(letter.letter.toUpperCase());
+							column.prepend(newTile);
+						}
+						
+						tileCount = 0;
+						column.find('.tile').each(function()
+						{
+							var tile = $(this);
+							tile.attr('data-row', tileCount);
+							tile.attr('data-column', columnId);
+							tileCount++;
+						});
+					});
+				}
+				
+				updateColumns();
+				
+				/*$('.column').each(function()
+				{
+					var column = $(this);
+					var tileCount = 7;
+					if (column.hasClass('even'))
+					{
+						tileCount = 8;
+					}
+					for(var i = 0; i < tileCount; i++)
+					{
+						var newTile = tileTemplate.clone();
+						var letter = randomLetter();
+						newTile.attr('data-letter', letter.letter);
+						newTile.attr('data-points', letter.points);
+						newTile.find('svg text').html(letter.letter.toUpperCase());
+						column.prepend(newTile);
+					}
+				});*/
+				
+				
+				
+				function updateWord()
+				{
+					var value = "";
+					for(var i = 0; i < word.length; i++)
+					{
+						var letter = $(word[i]);
+						value += letter.attr('data-letter');
+					}
+					//$('.sidebar .word svg text').html(wanakana.toHiragana(value, { IMEMode: true }));
+					$('.sidebar .word svg text').html(ToKana.fromRomaji(value));
+				}
+				
+				function deselect(word)
+				{
+					for(var i = 0; i < word.length; i++)
+					{
+						$(word[i]).removeClass('selected');
+					}
+				}
+				
+				$('.board').on('click', '.tile', function()
+				{
+					var tile = $(this);
+					var _lastLetter = $(lastLetter());
+					var _word = word;
+					if (tile.hasClass('selected'))
+					{
+						if (tile[0] == _lastLetter[0])
+						{
+							//tile.removeClass('selected');
+							deselect(_word.splice(_word.length - 1, 1));
+						}
+						else
+						{
+							var index = $.inArray(tile[0], _word) + 1;
+							deselect(_word.splice(index, _word.length - index));
+						}
+					}
+					else
+					{
+						if(typeof _lastLetter != "undefined")
+						{
+							var lastColumn = parseInt(_lastLetter.attr('data-column'));
+							var lastRow = parseInt(_lastLetter.attr('data-row'));
+							var currentColumn = parseInt(tile.attr('data-column'));
+							var currentRow = parseInt(tile.attr('data-row'));
+							if
+							(
+								Math.abs(currentColumn - lastColumn) > 1
+								||
+								(
+									Math.abs(currentColumn - lastColumn) == 1
+									&&
+									(
+										currentColumn % 2 == 1
+										&& 
+										(
+											currentRow > lastRow
+											|| currentRow - lastRow < -1
+										)
+										||
+										currentColumn % 2 == 0
+										&& 
+										(
+											currentRow < lastRow
+											|| currentRow - lastRow > 1
+										)
+									)
+								)
+								||
+								(
+									currentColumn == lastColumn
+									&& Math.abs(currentRow - lastRow) != 1
+								)
+							)
+							{
+								deselect(_word.splice(0, _word.length));
+							}
+						}
+						_word.push(tile[0]);
+						tile.addClass('selected');
+					}
+					updateWord();
+				});
+			});
+		</script>
+	</body>
+</html>
