@@ -10,6 +10,15 @@
 				box-sizing: border-box;
 			}
 			
+			*.unselectable
+			{
+				-moz-user-select: -moz-none;
+				-khtml-user-select: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+			
 			.game
 			{
 				border:1px solid black;
@@ -33,6 +42,23 @@
 				height:20%;
 				width:100%;
 				padding:10% 25%;
+			}
+			
+			.sidebar .dictionary
+			{
+				border:1px solid black;
+				display:inline-block;
+				height:80%;
+				width:100%;
+				overflow-x:hidden;
+				overflow-y:auto;
+			}
+			
+			.sidebar .dictionary .item
+			{
+				padding:1em;
+				width:100%;
+				border-bottom:1px solid black;
 			}
 			
 			.board
@@ -72,6 +98,7 @@
 				width:100%;
 				padding:25%;
 				/*text-align:center;*/
+				cursor: pointer;
 			}
 			.tile.selected
 			{
@@ -86,7 +113,7 @@
 	</head>
 	<body>
 		<div class="templates" style="display:none">
-			<div class="tile">
+			<div class="tile unselectable">
 				<svg width="100%" height="100%" viewBox="0 0 13 15">
 					<text x="50%" y="13" text-anchor="middle"></text>
 				</svg>
@@ -100,6 +127,8 @@
 					<svg width="100%" height="100%" viewBox="0 0 30 15">
 						<text x="50%" y="13" textLength="100%" lengthAdjust="spacingAndGlyphs" text-anchor="middle"></text>
 					</svg>
+				</div>
+				<div class="dictionary">
 				</div>
 			</div>
 			<div class="board">
@@ -236,7 +265,23 @@
 					}
 				});*/
 				
-				
+				function updateDictionary(word, kana)
+				{
+					/*console.log(word, kana);*/
+					$('.sidebar .dictionary').html('');
+					if (word.length > 2 && !(/[a-z]/i).test(kana))
+					{
+						var search = rikaikun.wordSearch(kana, false, 10);
+						if (search != null && search.data.length > 0)
+						{
+							for (var i = 0; i < search.data.length; i++)
+							{
+								var entry = search.data[i];
+								$('.sidebar .dictionary').append('<div class="item">' + entry[0] + (entry[1] != null ? '<br/>' + entry[1] : '') + '</div>');
+							}
+						}
+					}
+				}
 				
 				function updateWord()
 				{
@@ -247,7 +292,9 @@
 						value += letter.attr('data-letter');
 					}
 					//$('.sidebar .word svg text').html(wanakana.toHiragana(value, { IMEMode: true }));
-					$('.sidebar .word svg text').html(ToKana.fromRomaji(value));
+					var kana = ToKana.fromRomaji(value);
+					$('.sidebar .word svg text').html(kana);
+					updateDictionary(value, kana);
 				}
 				
 				function deselect(word)
