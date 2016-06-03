@@ -35,13 +35,32 @@
 				display:inline-block;
 			}
 			
-			.sidebar .word
+			.sidebar .word-container
 			{
 				border:1px solid black;
 				display:inline-block;
 				height:20%;
 				width:100%;
+				
+				text-align: center;
+				position:relative;
+			}
+			
+			.sidebar .word-container .word
+			{
+				vertical-align:bottom;
 				padding:10% 25%;
+				width:100%;
+			}
+			
+			.sidebar .word-container .points
+			{
+				position: absolute;
+				bottom:0;
+				padding:5%;
+				/*border-top:1px solid black;*/
+				min-height:1em;
+				width: 100%;
 			}
 			
 			.sidebar .dictionary
@@ -68,17 +87,12 @@
 				border:1px solid black;
 				position:relative;
 				display:inline-block;
-				/*display:inline-table;*/
 				vertical-align:top;
-				table-layout:fixed;
 			}
 			.column
 			{
 				width:14.28%;
-				/*height:100%;*/
-				/*display:table-cell;*/
 				display:inline-block;
-				/*margin-right:-4px;*/
 				border:1px solid black;
 				vertical-align:bottom;
 			}
@@ -97,12 +111,61 @@
 				height:12.5%;
 				width:100%;
 				padding:25%;
-				/*text-align:center;*/
-				cursor: pointer;
+				cursor: default;
+				position:relative;
 			}
 			.tile.selected
 			{
 				background:yellow;
+			}
+			.tile.valid
+			{
+				cursor: pointer;
+			}
+			
+			.tile .arrow
+			{
+				position:absolute;
+				z-index:5;
+				background-size:100% 100%;
+				width:33%;
+				height:33%;
+			}
+			.tile .arrow.up
+			{
+				background-image:url('arrows/up.png');
+				top:-16%;
+				left:33%;
+			}
+			.tile .arrow.down
+			{
+				background-image:url('arrows/down.png');
+				bottom:-16%;
+				left:33%;
+			}
+			.tile .arrow.up-right
+			{
+				background-image:url('arrows/up-right.png');
+				top:16%;
+				right:-16%;
+			}
+			.tile .arrow.down-right
+			{
+				background-image:url('arrows/down-right.png');
+				bottom:16%;
+				right:-16%;
+			}
+			.tile .arrow.up-left
+			{
+				background-image:url('arrows/up-left.png');
+				top:16%;
+				left:-16%;
+			}
+			.tile .arrow.down-left
+			{
+				background-image:url('arrows/down-left.png');
+				bottom:16%;
+				left:-16%;
 			}
 			/*.tile svg text
 			{
@@ -120,13 +183,16 @@
 			</div>
 			<div class="column odd"><div class="spacer"></div></div>
 			<div class="column even"></div>
+			<div class="arrow"></div>
 		</div>
 		<div class="game">
 			<div class="sidebar">
-				<div class="word">
-					<svg width="100%" height="100%" viewBox="0 0 30 15">
+				<div class="word-container">
+					<div class="word"></div>
+					<div class="points"></div>
+					<!--<svg width="100%" height="100%" viewBox="0 0 30 15">
 						<text x="50%" y="13" textLength="100%" lengthAdjust="spacingAndGlyphs" text-anchor="middle"></text>
-					</svg>
+					</svg>-->
 				</div>
 				<div class="dictionary">
 				</div>
@@ -162,7 +228,15 @@
 				{letter:'p', probability: 0.001139085, points: 10}
 			];
 			
+			var constants = {
+				width: 7,
+				height: 7
+			}
+			
 			var word = [];
+			var dictionaryEntries = null;
+			var score = 0;
+			var level = 1;
 			
 			function lastLetter()
 			{
@@ -193,10 +267,11 @@
 				var tileTemplate = $('.templates .tile');
 				var oddColumnTemplate = $('.templates .column.odd');
 				var evenColumnTemplate = $('.templates .column.even');
+				var arrowTemplate = $('.templates .arrow');
 				
 				var board = $('.board');
 				
-				for(var n = 1; n < 8; n++)
+				for(var n = 1; n < (constants.width + 1); n++)
 				{
 					var newColumn = null;
 					if(n % 2 == 1)
@@ -220,10 +295,10 @@
 						var columnId = column.attr('data-column');
 						var tileCount = column.find('.tile').length;
 						
-						var targetCount = 7;
+						var targetCount = constants.height;
 						if (column.hasClass('even'))
 						{
-							targetCount = 8;
+							targetCount++;
 						}
 						for(var i = 0; i < targetCount - tileCount; i++)
 						{
@@ -248,69 +323,87 @@
 				
 				updateColumns();
 				
-				/*$('.column').each(function()
+				function fillDictionary(entries)
 				{
-					var column = $(this);
-					var tileCount = 7;
-					if (column.hasClass('even'))
+					$('.sidebar .dictionary').html("");
+					for (var i = 0; i < entries.length; i++)
 					{
-						tileCount = 8;
+						var entry = entries[i];
+						$('.sidebar .dictionary').append('<div class="item">' + entry[0] + (entry[1] != null ? '<br/>' + entry[1] : '') + '</div>');
 					}
-					for(var i = 0; i < tileCount; i++)
-					{
-						var newTile = tileTemplate.clone();
-						var letter = randomLetter();
-						newTile.attr('data-letter', letter.letter);
-						newTile.attr('data-points', letter.points);
-						newTile.find('svg text').html(letter.letter.toUpperCase());
-						column.prepend(newTile);
-					}
-				});*/
+				}
 				
-				function updateDictionary(word, kana)
+				function checkDictionary(letters, word, kana)
 				{
 					isValidWord = false;
+					dictionaryEntries = null;
+					updatePoints("");
 					/*console.log(word, kana);*/
-					$('.sidebar .dictionary').html('');
+					//$('.sidebar .dictionary').html('');
 					if (word.length > 2 && !(/[a-z]/i).test(kana))
 					{
 						var search = rikaikun.wordSearch(kana, false, 15);
 						if (search != null && search.data.length > 0)
 						{
 							isValidWord = true;
-							for (var i = 0; i < search.data.length; i++)
-							{
-								var entry = search.data[i];
-								$('.sidebar .dictionary').append('<div class="item">' + entry[0] + (entry[1] != null ? '<br/>' + entry[1] : '') + '</div>');
-							}
+							dictionaryEntries = search.data;
 						}
+					}
+					if (isValidWord)
+					{
+						$(lastLetter()).addClass('valid');
+						var points = 0;
+						for(var i = 0; i < letters.length; i++)
+						{
+							var letter = $(letters[i]);
+							console.log(letters, letter, letter.attr('data-points'), parseInt(letter.attr('data-points')));
+							points += parseInt(letter.attr('data-points'));
+						}
+						points += level;
+						points = points * 10 * word.length;
+						updatePoints(points);
 					}
 				}
 				
 				function updateWord()
 				{
 					var value = "";
+					var _word = word;
 					for(var i = 0; i < word.length; i++)
 					{
 						var letter = $(word[i]);
 						value += letter.attr('data-letter');
 					}
-					//$('.sidebar .word svg text').html(wanakana.toHiragana(value, { IMEMode: true }));
 					var kana = ToKana.fromRomaji(value);
-					$('.sidebar .word svg text').html(kana);
-					updateDictionary(value, kana);
+					//$('.sidebar .word svg text').html(kana);
+					$('.sidebar .word-container .word').html(kana);
+					checkDictionary(_word, value, kana);
+				}
+				
+				function updatePoints(points)
+				{
+					$('.sidebar .word-container .points').text(points);
+				}
+				
+				function removeArrow(letter)
+				{
+					$(letter).find('.arrow').remove();
 				}
 				
 				function deselect(word)
 				{
 					for(var i = 0; i < word.length; i++)
 					{
-						$(word[i]).removeClass('selected');
+						var letter = word[i];
+						$(letter).removeClass('selected');
+						$(letter).removeClass('valid');
+						removeArrow(letter);
 					}
 				}
 				
 				function confirm()
 				{
+					fillDictionary(dictionaryEntries);
 					var _word = word;
 					for(var i = 0; i < _word.length; i++)
 					{
@@ -322,12 +415,13 @@
 				
 				$('.board').on('click', '.tile', function()
 				{
+					var self = this;
 					var tile = $(this);
 					var _lastLetter = $(lastLetter());
 					var _word = word;
 					if (tile.hasClass('selected'))
 					{
-						if (tile[0] == _lastLetter[0])
+						if (self == _lastLetter[0])
 						{
 							if (isValidWord)
 							{
@@ -341,8 +435,12 @@
 						}
 						else
 						{
-							var index = $.inArray(tile[0], _word) + 1;
+							var index = $.inArray(self, _word) + 1;
 							deselect(_word.splice(index, _word.length - index));
+						}
+						if (_word.length > 0)
+						{
+							removeArrow(lastLetter());
 						}
 					}
 					else
@@ -386,7 +484,33 @@
 								deselect(_word.splice(0, _word.length));
 							}
 						}
-						_word.push(tile[0]);
+						if (_word.length > 0)
+						{
+							var arrowClass = ""
+							_lastLetter = $(lastLetter());
+							var lastLetterOffset = _lastLetter.offset();
+							var tileOffset = tile.offset();
+							if (tileOffset.top > lastLetterOffset.top)
+							{
+								arrowClass = "down";
+							}
+							else
+							{
+								arrowClass = "up";
+							}
+							if (tileOffset.left > lastLetterOffset.left)
+							{
+								arrowClass += "-right"
+							}
+							else if (tileOffset.left < lastLetterOffset.left)
+							{
+								arrowClass += "-left"
+							}
+							var newArrow = arrowTemplate.clone();
+							newArrow.addClass(arrowClass);
+							_lastLetter.append(newArrow);
+						}
+						_word.push(self);
 						tile.addClass('selected');
 					}
 					updateWord();
