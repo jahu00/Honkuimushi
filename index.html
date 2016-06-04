@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="rikaikun/data.js"></script>
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
+		<link type="text/css" rel="stylesheet" media="screen" href="fonts/bokutachi-no-gothic-2/bokutachi-no-gothic-2.css">
 	</head>
 	<body>
 		<div class="templates" style="display:none">
@@ -15,12 +16,14 @@
 				<svg width="100%" height="100%" viewBox="0 0 17 17">
 					<text x="50%" y="15" text-anchor="middle"></text>
 				</svg>
+				<div class="point-indicator"></div>
 			</div>
 			<div class="column odd"><div class="spacer"></div></div>
 			<div class="column even"></div>
 			<div class="arrow"></div>
 		</div>
-		<div class="game">
+		<div id="Container">
+		<div class="game screen">
 			<div class="sidebar">
 				<div class="word-container">
 					<div class="word"></div>
@@ -104,9 +107,9 @@
 				var evenColumnTemplate = $('.templates .column.even');
 				var arrowTemplate = $('.templates .arrow');
 				
-				var board = $('.board');
 				function createColumns()
 				{
+					var board = $('.board');
 					var spacerType = 1;
 					for(var n = 1; n < (constants.width + 1); n++)
 					{
@@ -128,7 +131,7 @@
 				
 				function updateColumns()
 				{
-					$('.column').each(function()
+					$('.board .column').each(function()
 					{
 						var column = $(this);
 						var columnId = column.attr('data-column');
@@ -146,6 +149,7 @@
 							newTile.attr('data-letter', letter.letter);
 							newTile.attr('data-points', letter.points);
 							newTile.find('svg text').html(letter.letter);//.toUpperCase());
+							newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
 							column.prepend(newTile);
 						}
 						
@@ -170,7 +174,7 @@
 					}
 				}
 				
-				function checkDictionary(letters, word, kana)
+				function checkDictionary(letters, romaji, kana)
 				{
 					isValidWord = false;
 					dictionaryEntries = null;
@@ -194,7 +198,7 @@
 							points += parseInt(letter.attr('data-points'));
 						}
 						points += level;
-						points = points * 10 * word.length;
+						points = points * 10 * letters.length;
 						updatePoints(points);
 					}
 				}
@@ -203,9 +207,9 @@
 				{
 					var value = "";
 					var _word = word;
-					for(var i = 0; i < word.length; i++)
+					for(var i = 0; i < _word.length; i++)
 					{
-						var letter = $(word[i]);
+						var letter = $(_word[i]);
 						value += letter.attr('data-letter');
 					}
 					var kana = ToKana.fromRomaji(value);
