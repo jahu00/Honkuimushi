@@ -133,15 +133,21 @@
 	{
 		background-image:url('tiles/default-selected.png');
 	}
-	.tile.selected svg text
-	{
-		fill: white;
-	}
-	
+		.tile.selected svg text
+		{
+			fill: white;
+		}
 	.tile.valid
 	{
 		cursor: pointer;
 	}
+	.tile svg text
+	{
+		font-family: 'Montserrat', sans-serif;
+		/*font-weight: bold;*/
+		text-transform: capitalize;
+	}
+
 
 .tile .arrow
 {

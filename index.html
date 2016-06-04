@@ -7,12 +7,13 @@
 		<script type="text/javascript" src="js/preloadStyleImages.js"></script>
 		<script type="text/javascript" src="rikaikun/data.js"></script>
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
+		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
 	</head>
 	<body>
 		<div class="templates" style="display:none">
 			<div class="tile unselectable">
-				<svg width="100%" height="100%" viewBox="0 0 13 15">
-					<text x="50%" y="13" text-anchor="middle"></text>
+				<svg width="100%" height="100%" viewBox="0 0 17 17">
+					<text x="50%" y="15" text-anchor="middle"></text>
 				</svg>
 			</div>
 			<div class="column odd"><div class="spacer"></div></div>
@@ -38,28 +39,28 @@
 			var rikaikun = new rcxDict(false);
 		
 			var letters = [
-				{letter:'a', probability: 0.138968333, points: 1},
-				{letter:'o', probability: 0.108195018, points: 1},
-				{letter:'i', probability: 0.104272961, points: 1},
-				{letter:'u', probability: 0.087630851, points: 2},
-				{letter:'n', probability: 0.085601805, points: 2},
-				{letter:'e', probability: 0.068102514, points: 3},
-				{letter:'k', probability: 0.065016332, points: 3},
-				{letter:'t', probability: 0.058419475, points: 3},
-				{letter:'s', probability: 0.057478706, points: 3},
-				{letter:'r', probability: 0.049367439, points: 4},
-				{letter:'h', probability: 0.047018794, points: 4},
-				{letter:'m', probability: 0.028580373, points: 5},
-				{letter:'d', probability: 0.026679167, points: 5},
-				{letter:'g', probability: 0.022093326, points: 5},
-				{letter:'y', probability: 0.0151277, points: 6},
-				{letter:'j', probability: 0.008953697, points: 7},
-				{letter:'c', probability: 0.008094877, points: 7},
-				{letter:'b', probability: 0.008080126, points: 7},
-				{letter:'w', probability: 0.004420304, points: 8},
-				{letter:'z', probability: 0.00441047, points: 8},
-				{letter:'f', probability: 0.002348645, points: 9},
-				{letter:'p', probability: 0.001139085, points: 10}
+				{ letter: 'a', probability: 0.140102445, points: 1 },
+				{ letter: 'o', probability: 0.109077991, points: 1 },
+				{ letter: 'i', probability: 0.105123926, points: 1 },
+				{ letter: 'u', probability: 0.088346001, points: 2 },
+				{ letter: 'n', probability: 0.086300397, points: 2 },
+				{ letter: 'e', probability: 0.068658295, points: 3 },
+				{ letter: 'k', probability: 0.065546927, points: 3 },
+				{ letter: 't', probability: 0.058896233, points: 4 },
+				{ letter: 's', probability: 0.057947786, points: 4 },
+				{ letter: 'r', probability: 0.049770324, points: 5 },
+				{ letter: 'h', probability: 0.039277925, points: 5 },
+				{ letter: 'm', probability: 0.028813615, points: 6 },
+				{ letter: 'd', probability: 0.026896894, points: 6 },
+				{ letter: 'g', probability: 0.022273629, points: 6 },
+				{ letter: 'y', probability: 0.015251157, points: 6 },
+				{ letter: 'j', probability: 0.009026768, points: 7 },
+				{ letter: 'ch', probability: 0.008124587, points: 7 },
+				{ letter: 'b', probability: 0.008146067, points: 7 },
+				{ letter: 'w', probability: 0.004456378, points: 8 },
+				{ letter: 'z', probability: 0.004446464, points: 8 },
+				{ letter: 'f', probability: 0.002367812, points: 9 },
+				{ letter: 'p', probability: 0.001148381, points: 10 }
 			];
 			
 			var constants = {
@@ -144,7 +145,7 @@
 							var letter = randomLetter();
 							newTile.attr('data-letter', letter.letter);
 							newTile.attr('data-points', letter.points);
-							newTile.find('svg text').html(letter.letter.toUpperCase());
+							newTile.find('svg text').html(letter.letter);//.toUpperCase());
 							column.prepend(newTile);
 						}
 						
@@ -174,7 +175,7 @@
 					isValidWord = false;
 					dictionaryEntries = null;
 					updatePoints("");
-					if (word.length > 2 && !(/[a-z]/i).test(kana))
+					if (letters.length > 2 && !(/[a-z]/i).test(kana))
 					{
 						var search = rikaikun.wordSearch(kana, false, 15);
 						if (search != null && search.data.length > 0)

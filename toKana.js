@@ -159,6 +159,10 @@ ToKana.fromRomaji = function(text, watchdog)
 				romaji = key[0] + key;
 				result = "っ" + this.romajiToKanaMapping[key];
 				break;
+			} else if (key == "cha" && text.startsWith(key + key))
+			{
+				romaji = key + key;
+				result = "っ" + this.romajiToKanaMapping[key];
 			}
 			
 		}
