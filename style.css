@@ -95,9 +95,28 @@
 {
 	width:100%;
 	height:7.24%;
-	border:1px solid red;
+	/*border:1px solid red;*/
+	background-size:100% 100%;
+	
 	display:inline-block;
 }
+	.spacer.type-1
+	{
+		background-image:url('spacers/first.png');
+	}
+	.spacer.type-2
+	{
+		background-image:url('spacers/second.png');
+	}
+	.spacer.type-3
+	{
+		background-image:url('spacers/third.png');
+	}
+	.spacer.type-4
+	{
+		background-image:url('spacers/fourth.png');
+	}
+	
 .tile
 {
 	/*border:2px solid black;*/

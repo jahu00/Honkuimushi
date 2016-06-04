@@ -104,21 +104,25 @@
 				var arrowTemplate = $('.templates .arrow');
 				
 				var board = $('.board');
-				
-				for(var n = 1; n < (constants.width + 1); n++)
+				function createColumns()
 				{
-					var newColumn = null;
-					if(n % 2 == 1)
+					var spacerType = 1;
+					for(var n = 1; n < (constants.width + 1); n++)
 					{
-						newColumn = oddColumnTemplate.clone();
+						var newColumn = null;
+						if(n % 2 == 1)
+						{
+							newColumn = oddColumnTemplate.clone();
+						}
+						else
+						{
+							newColumn = evenColumnTemplate.clone();
+							spacerType = (n / 2) + 1;
+						}
+						newColumn.find('.spacer').addClass('type-' + spacerType);
+						newColumn.attr('data-column', n);
+						board.append(newColumn);
 					}
-					else
-					{
-						newColumn = evenColumnTemplate.clone();
-					}
-					
-					newColumn.attr('data-column', n);
-					board.append(newColumn);
 				}
 				
 				function updateColumns()
@@ -348,6 +352,7 @@
 				function init()
 				{
 					preloadStyleImages.preload();
+					createColumns();
 					updateColumns();
 				}
 				
