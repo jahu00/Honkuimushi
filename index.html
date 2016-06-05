@@ -2,6 +2,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+		<script type="text/javascript" src="letters.js"></script>
 		<script type="text/javascript" src="toKana.js"></script>
 		<script type="text/javascript" src="js/fileHelpers.js"></script>
 		<script type="text/javascript" src="js/preloadStyleImages.js"></script>
@@ -9,13 +10,12 @@
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/bokutachi-no-gothic-2/bokutachi-no-gothic-2.css">
+		<link type="text/css" rel="stylesheet" media="screen" href="fonts/sigmar-one/sigmar-one.css">
 	</head>
 	<body>
 		<div class="templates" style="display:none">
 			<div class="tile unselectable">
-				<svg width="100%" height="100%" viewBox="0 0 17 17">
-					<text x="50%" y="15" text-anchor="middle"></text>
-				</svg>
+				<div class="letter"></div>
 				<div class="point-indicator"></div>
 			</div>
 			<div class="column odd"><div class="spacer"></div></div>
@@ -26,11 +26,9 @@
 		<div class="game screen">
 			<div class="sidebar">
 				<div class="word-container">
+					<div class="score">0</div>
 					<div class="word"></div>
 					<div class="points"></div>
-					<!--<svg width="100%" height="100%" viewBox="0 0 30 15">
-						<text x="50%" y="13" textLength="100%" lengthAdjust="spacingAndGlyphs" text-anchor="middle"></text>
-					</svg>-->
 				</div>
 				<div class="dictionary">
 				</div>
@@ -40,31 +38,6 @@
 		</div>
 		<script>
 			var rikaikun = new rcxDict(false);
-		
-			var letters = [
-				{ letter: 'a', probability: 0.140102445, points: 1 },
-				{ letter: 'o', probability: 0.109077991, points: 1 },
-				{ letter: 'i', probability: 0.105123926, points: 1 },
-				{ letter: 'u', probability: 0.088346001, points: 2 },
-				{ letter: 'n', probability: 0.086300397, points: 2 },
-				{ letter: 'e', probability: 0.068658295, points: 3 },
-				{ letter: 'k', probability: 0.065546927, points: 3 },
-				{ letter: 't', probability: 0.058896233, points: 4 },
-				{ letter: 's', probability: 0.057947786, points: 4 },
-				{ letter: 'r', probability: 0.049770324, points: 5 },
-				{ letter: 'h', probability: 0.039277925, points: 5 },
-				{ letter: 'm', probability: 0.028813615, points: 6 },
-				{ letter: 'd', probability: 0.026896894, points: 6 },
-				{ letter: 'g', probability: 0.022273629, points: 6 },
-				{ letter: 'y', probability: 0.015251157, points: 6 },
-				{ letter: 'j', probability: 0.009026768, points: 7 },
-				{ letter: 'ch', probability: 0.008124587, points: 7 },
-				{ letter: 'b', probability: 0.008146067, points: 7 },
-				{ letter: 'w', probability: 0.004456378, points: 8 },
-				{ letter: 'z', probability: 0.004446464, points: 8 },
-				{ letter: 'f', probability: 0.002367812, points: 9 },
-				{ letter: 'p', probability: 0.001148381, points: 10 }
-			];
 			
 			var constants = {
 				width: 7,
@@ -74,6 +47,7 @@
 			var word = [];
 			var dictionaryEntries = null;
 			var score = 0;
+			var points = 0;
 			var level = 1;
 			
 			function lastLetter()
@@ -148,7 +122,8 @@
 							var letter = randomLetter();
 							newTile.attr('data-letter', letter.letter);
 							newTile.attr('data-points', letter.points);
-							newTile.find('svg text').html(letter.letter);//.toUpperCase());
+							newTile.attr('data-multiplier', 1);
+							newTile.find('.letter').html(letter.letter);
 							newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
 							column.prepend(newTile);
 						}
@@ -191,14 +166,17 @@
 					if (isValidWord)
 					{
 						$(lastLetter()).addClass('valid');
-						var points = 0;
+						var _points = 0;
+						var multiplier = 0;
 						for(var i = 0; i < letters.length; i++)
 						{
 							var letter = $(letters[i]);
-							points += parseInt(letter.attr('data-points'));
+							_points += parseInt(letter.attr('data-points'));
+							multiplier += parseInt(letter.attr('data-multiplier'));
 						}
-						points += level;
-						points = points * 10 * letters.length;
+						_points += level;
+						_points = _points * 10 * multiplier;
+						points = _points;
 						updatePoints(points);
 					}
 				}
@@ -213,7 +191,6 @@
 						value += letter.attr('data-letter');
 					}
 					var kana = ToKana.fromRomaji(value);
-					//$('.sidebar .word svg text').html(kana);
 					$('.sidebar .word-container .word').html(kana);
 					checkDictionary(_word, value, kana);
 				}
@@ -242,6 +219,8 @@
 				function confirm()
 				{
 					fillDictionary(dictionaryEntries);
+					score += points;
+					updateScore(score);
 					var _word = word;
 					for(var i = 0; i < _word.length; i++)
 					{
@@ -249,6 +228,11 @@
 					}
 					_word.splice(0, _word.length);
 					updateColumns();
+				}
+				
+				function updateScore(points)
+				{
+					$('.sidebar .word-container .score').html(points);
 				}
 				
 				$('.board').on('click', '.tile', function()

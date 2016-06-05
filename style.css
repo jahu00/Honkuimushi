@@ -44,9 +44,9 @@
 #Container
 {
 	position:relative;
-	/*border:1px solid black;*/
 	width:640px;
 	height:480px;
+	font-size:16px;
 }
 
 .game
@@ -69,23 +69,47 @@
 	display:inline-block;
 	height:20%;
 	width:100%;
-	
 	text-align: center;
 	position:relative;
+	background:black;
+	color:white;
+}
+
+.sidebar .word-container .score
+{
+	position:absolute;
+	top:0;
+	width:100%;
+	background: #eadea1;
+	height:40%;
+	font-size:1.6em;
+	text-align:center;
+	font-family:'Sigmar One';
+	line-height:0;
+	padding-top:0.6em;
+	text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;  
+	color:yellow;
+	border:2px solid #c6bb84;
 }
 
 .sidebar .word-container .word
 {
-	vertical-align:bottom;
-	padding:10% 25%;
+	position:absolute;
+	top:40%;
+	/*padding-top:0.2em;*/
 	width:100%;
+	font-size:1.2em;
 }
 
 .sidebar .word-container .points
 {
 	position: absolute;
-	bottom:0;
-	padding:5%;
+	bottom:4%;
+	/*padding:5%;*/
 	/*border-top:1px solid black;*/
 	min-height:1em;
 	width: 100%;
@@ -126,7 +150,7 @@
 	vertical-align:bottom;
 }
 
-.spacer
+.column .spacer
 {
 	width:100%;
 	height:7.24%;
@@ -135,32 +159,31 @@
 	
 	display:inline-block;
 }
-	.spacer.type-1
+	.column .spacer.type-1
 	{
 		background-image:url('spacers/first.png');
 	}
-	.spacer.type-2
+	.column .spacer.type-2
 	{
 		background-image:url('spacers/second.png');
 	}
-	.spacer.type-3
+	.column .spacer.type-3
 	{
 		background-image:url('spacers/third.png');
 	}
-	.spacer.type-4
+	.column .spacer.type-4
 	{
 		background-image:url('spacers/fourth.png');
 	}
 	
 .tile
 {
-	/*border:2px solid black;*/
 	background-size:100% 100%;
 	background-image:url('tiles/default.png');
 	display:inline-block;
 	height:12.5%;
 	width:100%;
-	padding:25%;
+	/*padding:25%;*/
 	cursor: default;
 	position:relative;
 }
@@ -168,19 +191,25 @@
 	{
 		background-image:url('tiles/default-selected.png');
 	}
-		.tile.selected svg text
+		.tile.selected .letter
 		{
-			fill: white;
+			color: white;
 		}
 	.tile.valid
 	{
 		cursor: pointer;
 	}
-	.tile svg text
+	.tile .letter
 	{
+		position: absolute;
 		font-family: 'Montserrat', sans-serif;
-		/*font-weight: bold;*/
 		text-transform: capitalize;
+		width:100%;
+		left:0;
+		top:50%;
+		margin-top:-0.6em;
+		text-align:center;
+		font-size:1.6em;
 	}
 
 
@@ -253,8 +282,3 @@
 	{
 		background-image:url('tiles/point-3.png');
 	}
-/*.tile svg text
-{
-	width:100%;
-	text-align:center;
-}*/

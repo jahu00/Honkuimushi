@@ -47,6 +47,7 @@ ToKana.romajiToKanaMapping = {
 	to: 'と',
 	cha: 'ちゃ',
 	chu: 'ちゅ',
+	che: 'ちぇ',
 	cho: 'ちょ',
 	ti: 'てぃ',
 	tu: 'とぅ',
