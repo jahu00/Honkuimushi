@@ -24,12 +24,13 @@
 		</div>
 		<div id="Container">
 		<div class="game screen">
-			<div class="sidebar">
+			<div class="sidebar unselectable">
 				<div class="word-container">
-					<div class="score">0</div>
+					<div class="score outline">0</div>
 					<div class="word"></div>
 					<div class="points"></div>
 				</div>
+				<div class="button outline submit"> Submit</div>
 				<div class="dictionary">
 				</div>
 			</div>
@@ -218,6 +219,10 @@
 				
 				function confirm()
 				{
+					if (!isValidWord)
+					{
+						return;
+					}
 					fillDictionary(dictionaryEntries);
 					score += points;
 					updateScore(score);
@@ -232,10 +237,10 @@
 				
 				function updateScore(points)
 				{
-					$('.sidebar .word-container .score').html(points);
+					$('.sidebar .word-container .score').html(points.toLocaleString('en-US'));
 				}
 				
-				$('.board').on('click', '.tile', function()
+				function tileHandler()
 				{
 					var self = this;
 					var tile = $(this);
@@ -336,13 +341,34 @@
 						tile.addClass('selected');
 					}
 					updateWord();
-				});
+				}
+				
+				function clearBoard()
+				{
+					$('.game .board .tile').remove();
+				}
+				
+				function newGame()
+				{
+					word = [];
+					dictionaryEntries = null;
+					score = 0;
+					points = 0;
+					level = 1;
+					clearBoard();
+					updateColumns();
+					updateWord();
+					updateScore(score);
+				}
 				
 				function init()
 				{
 					preloadStyleImages.preload();
 					createColumns();
-					updateColumns();
+					//updateColumns();
+					$('.board').on('click', '.tile', tileHandler);
+					$('.sidebar').on('click', '.submit', confirm);
+					newGame();
 				}
 				
 				init();

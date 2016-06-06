@@ -12,6 +12,15 @@
 	user-select: none;
 }
 
+.outline
+{
+	text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;  
+}
+
 .overlay-wrapper
 {
 	position:absolute;
@@ -62,6 +71,32 @@
 	display:inline-block;
 }
 
+.sidebar .button
+{
+	width:100%;
+	height:5%;
+	font-family:'Sigmar One';
+	text-align:center;
+	line-height: 0;
+    padding-top: 0.75em;
+	background-size:100% 100%;
+	background-image:url('gui/button.png');
+	color:orange;
+	cursor:pointer;
+}
+
+.sidebar .button:hover
+{
+	/*background-image:url('gui/button-hover.png');*/
+	color:yellow;
+}
+
+.sidebar .button:active
+{
+	background-image:url('gui/button-pressed.png');
+	color:orange;
+}
+
 .sidebar .word-container
 {
 	font-family: 'Bokutachi no Gothic 2';
@@ -80,20 +115,17 @@
 	position:absolute;
 	top:0;
 	width:100%;
-	background: #eadea1;
 	height:40%;
 	font-size:1.6em;
 	text-align:center;
 	font-family:'Sigmar One';
 	line-height:0;
 	padding-top:0.6em;
-	text-shadow:
-    -1px -1px 0 black,
-    1px -1px 0 black,
-    -1px 1px 0 black,
-    1px 1px 0 black;  
 	color:yellow;
-	border:2px solid #c6bb84;
+	/*border:2px solid #c6bb84;
+	background: #eadea1;*/
+	background-size:100% 100%;
+	background-image:url('gui/score.png');
 }
 
 .sidebar .word-container .word
@@ -119,18 +151,18 @@
 {
 	border:1px solid black;
 	display:inline-block;
-	height:80%;
+	height:75%;
 	width:100%;
 	overflow-x:hidden;
 	overflow-y:auto;
 }
 
-.sidebar .dictionary .item
-{
-	padding:1em;
-	width:100%;
-	border-bottom:1px solid black;
-}
+	.sidebar .dictionary .item
+	{
+		padding:1em;
+		width:100%;
+		border-bottom:1px solid black;
+	}
 
 .board
 {

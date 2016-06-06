@@ -79,7 +79,6 @@ ToKana.romajiToKanaMapping = {
 	hyo: 'ひょ',
 	fa: 'ふぁ',
 	fi: 'ふぃ',
-	fu: 'ふぅ',
 	fe: 'ふぇ',
 	fo: 'ふぉ',
 	fa: 'ふぁ',
