@@ -25,12 +25,14 @@
 		<div id="Container">
 		<div class="game screen">
 			<div class="sidebar unselectable">
+				<div class="score outline">0</div>
 				<div class="word-container">
-					<div class="score outline">0</div>
 					<div class="word"></div>
 					<div class="points"></div>
+					<div class="level-indicator">Level <span class="level">1</span></div>
 				</div>
 				<div class="button outline submit"> Submit</div>
+				<div class="progress"><div class="bar"></div></div>
 				<div class="dictionary">
 				</div>
 			</div>
@@ -45,12 +47,19 @@
 				height: 7
 			}
 			
+			/*var levels = [3000];
+			for(var i = 1; i < 10; i++)
+			{
+			  levels.push(levels[i-1] + levels[0] + i * 1000);
+			}*/
+			
 			var word = [];
 			var dictionaryEntries = null;
 			var score = 0;
 			var points = 0;
 			var level = 1;
-			
+			var nextLevel = 3000;
+			var lastLevel = 0;
 			function lastLetter()
 			{
 				return word[word.length - 1];
@@ -192,6 +201,14 @@
 						value += letter.attr('data-letter');
 					}
 					var kana = ToKana.fromRomaji(value);
+					if (kana.length == 0)
+					{
+						$('.sidebar .level-indicator').show();
+					}
+					else
+					{
+						$('.sidebar .level-indicator').hide();
+					}
 					$('.sidebar .word-container .word').html(kana);
 					checkDictionary(_word, value, kana);
 				}
@@ -237,7 +254,19 @@
 				
 				function updateScore(points)
 				{
-					$('.sidebar .word-container .score').html(points.toLocaleString('en-US'));
+					$('.sidebar .score').html(points.toLocaleString('en-US'));
+					var levelUp = points > nextLevel;
+					if (levelUp)
+					{
+						level++;
+						lastLevel = nextLevel;
+						nextLevel = nextLevel + 3000 + (level - 1) * 1000;
+						$('.sidebar .level-indicator .level').html(level);
+						$('.sidebar .progress .bar').css('transition', 0);
+						$('.sidebar .progress .bar').css('right', '100%');
+						$('.sidebar .progress .bar').css('transition', null);
+					}
+					$('.sidebar .progress .bar').css('right', (100 - (100 * (points - lastLevel) / (nextLevel - lastLevel))) + '%');
 				}
 				
 				function tileHandler()
@@ -355,6 +384,8 @@
 					score = 0;
 					points = 0;
 					level = 1;
+					nextLevel = 3000;
+					lastLevel = 0;
 					clearBoard();
 					updateColumns();
 					updateWord();

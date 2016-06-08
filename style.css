@@ -97,25 +97,12 @@
 	color:orange;
 }
 
-.sidebar .word-container
+.sidebar .score
 {
-	font-family: 'Bokutachi no Gothic 2';
-	border:1px solid black;
-	display:inline-block;
-	height:20%;
+	/*position:absolute;
+	top:0;*/
 	width:100%;
-	text-align: center;
-	position:relative;
-	background:black;
-	color:white;
-}
-
-.sidebar .word-container .score
-{
-	position:absolute;
-	top:0;
-	width:100%;
-	height:40%;
+	height:8%;
 	font-size:1.6em;
 	text-align:center;
 	font-family:'Sigmar One';
@@ -128,10 +115,35 @@
 	background-image:url('gui/score.png');
 }
 
+.sidebar .word-container
+{
+	font-family: 'Bokutachi no Gothic 2';
+	border:1px solid black;
+	display:inline-block;
+	height:12%;
+	width:100%;
+	text-align: center;
+	position:relative;
+	background:black;
+	color:white;
+}
+
+.sidebar .word-container .level-indicator
+{
+	font-family:'Sigmar One';
+	font-size:1.6em;
+	color:#c6bb84;
+	position:absolute;
+	width:100%;
+	text-align:center;
+	top:50%;
+	line-height: 0;
+}
+
 .sidebar .word-container .word
 {
 	position:absolute;
-	top:40%;
+	top:5%;
 	/*padding-top:0.2em;*/
 	width:100%;
 	font-size:1.2em;
@@ -147,11 +159,32 @@
 	width: 100%;
 }
 
+.sidebar .progress
+{
+	height:10%;
+	width:100%;
+	background:black;
+	overflow:hidden;
+	position:relative;
+}
+
+.sidebar .progress .bar
+{
+	position:absolute;
+	top:0;
+	right:100%;
+	height:100%;
+	width:100%;
+	background-image:url('gui/progress-bar.png');
+	background-size:100% 100%;
+	transition:0.2s;
+}
+
 .sidebar .dictionary
 {
 	border:1px solid black;
 	display:inline-block;
-	height:75%;
+	height:65%;
 	width:100%;
 	overflow-x:hidden;
 	overflow-y:auto;
