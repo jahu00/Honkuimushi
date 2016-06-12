@@ -7,6 +7,7 @@
 		<script type="text/javascript" src="js/fileHelpers.js"></script>
 		<script type="text/javascript" src="js/preloadStyleImages.js"></script>
 		<script type="text/javascript" src="rikaikun/data.js"></script>
+		<script type="text/javascript" src="wordFrequency.js"></script>
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/bokutachi-no-gothic-2/bokutachi-no-gothic-2.css">
@@ -41,6 +42,7 @@
 		</div>
 		<script>
 			var rikaikun = new rcxDict(false);
+			var wordFrequency = new WordFrequency();
 			
 			var constants = {
 				width: 7,
@@ -149,13 +151,82 @@
 					});
 				}
 				
-				function fillDictionary(entries)
+				function fillDictionary(entries, kana)
 				{
+					$('.sidebar .dictionary').scrollTop(0);
 					$('.sidebar .dictionary').html("");
+					$('.sidebar .dictionary').append('<div class="item heading">' + kana + '</div>');
+					var groupedEntries = [];
+					var groupedEntriesIndex = {};
 					for (var i = 0; i < entries.length; i++)
 					{
 						var entry = entries[i];
-						$('.sidebar .dictionary').append('<div class="item">' + entry[0] + (entry[1] != null ? '<br/>' + entry[1] : '') + '</div>');
+						var split = entry[0].split("/");
+						var kanjiKana = split.shift();
+						var kanji = kanjiKana.replace(/^(.*?)[\s ].*$/, "$1").trim();
+						var entryKana = kanjiKana.replace(/^.*\[(.*)\].*$/, "$1").trim();
+						var frequency = wordFrequency.findFrequency(kanji);
+						var definition = split.join("; ").trim();
+						var groupedEntry = null;
+						var key = entryKana + " " + definition;
+						if (typeof groupedEntriesIndex[key] == "undefined")
+						{
+							groupedEntry = {
+								kana: entryKana,
+								definition: definition,
+								frequency: frequency,
+								inflection: entry[1],
+								entries: []
+							};
+							
+							groupedEntriesIndex[key] = groupedEntry;
+							groupedEntries.push(groupedEntry);
+						}
+						else
+						{
+							groupedEntry = groupedEntriesIndex[key];
+						}
+						var detailedEntry = {
+							kanji: kanji,
+							frequency: frequency
+						};
+						groupedEntry.entries.push(detailedEntry);
+						if (frequency < groupedEntry.frequency)
+						{
+							groupedEntry.frequency = frequency;
+						}
+					}
+					groupedEntries.sort(function(a,b){ return a.frequency - b.frequency; });
+					for (var n = 0; n < groupedEntries.length; n++)
+					{
+						var groupedEntry = groupedEntries[n];
+						groupedEntry.entries.sort(function(a,b){ return a.frequency - b.frequency; });
+						var kanji = "";
+						var firstKanji = true;
+						for(var j = 0; j < groupedEntry.entries.length; j++)
+						{
+							var detailedEntry = groupedEntry.entries[j];
+							if (firstKanji)
+							{
+								firstKanji = false;
+							}
+							else
+							{
+								kanji += ", ";
+							}
+							
+							kanji += detailedEntry.kanji;
+						}
+						$('.sidebar .dictionary').append
+						(
+							'<div class="item">'
+							+ kanji
+							+ (kanji.indexOf(groupedEntry.kana) == -1 ? " [" + groupedEntry.kana + "]" : "")
+							+ (groupedEntry.inflection != null ? "<br/>" + groupedEntry.inflection : "")
+							+ "<br/>"
+							+ groupedEntry.definition
+							+ '</div>'
+						);
 					}
 				}
 				
@@ -191,16 +262,22 @@
 					}
 				}
 				
+				function wordToKana(word)
+				{
+					var value = "";
+					for(var i = 0; i < word.length; i++)
+					{
+						var letter = $(word[i]);
+						value += letter.attr('data-letter');
+					}
+					return ToKana.fromRomaji(value);
+				}
+				
 				function updateWord()
 				{
 					var value = "";
 					var _word = word;
-					for(var i = 0; i < _word.length; i++)
-					{
-						var letter = $(_word[i]);
-						value += letter.attr('data-letter');
-					}
-					var kana = ToKana.fromRomaji(value);
+					var kana = wordToKana(_word);
 					if (kana.length == 0)
 					{
 						$('.sidebar .level-indicator').show();
@@ -240,10 +317,11 @@
 					{
 						return;
 					}
-					fillDictionary(dictionaryEntries);
+					var _word = word;
+					var kana = wordToKana(_word);
+					fillDictionary(dictionaryEntries, kana);
 					score += points;
 					updateScore(score);
-					var _word = word;
 					for(var i = 0; i < _word.length; i++)
 					{
 						$(_word[i]).remove();
@@ -285,7 +363,6 @@
 							}
 							else
 							{
-								//tile.removeClass('selected');
 								deselect(_word.splice(_word.length - 1, 1));
 							}
 						}
