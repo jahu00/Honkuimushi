@@ -11,6 +11,7 @@
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/bokutachi-no-gothic-2/bokutachi-no-gothic-2.css">
+		<link type="text/css" rel="stylesheet" media="screen" href="fonts/honoka-antique-maru/honoka-antique-maru.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/sigmar-one/sigmar-one.css">
 	</head>
 	<body>
@@ -220,11 +221,12 @@
 						$('.sidebar .dictionary').append
 						(
 							'<div class="item">'
+							+ '<div class="kanji">'
 							+ kanji
 							+ (kanji.indexOf(groupedEntry.kana) == -1 ? " [" + groupedEntry.kana + "]" : "")
-							+ (groupedEntry.inflection != null ? "<br/>" + groupedEntry.inflection : "")
-							+ "<br/>"
-							+ groupedEntry.definition
+							+ '</div>'
+							+ (groupedEntry.inflection != null ? '<div class="inflection">' + groupedEntry.inflection + '</div>' : "")
+							+ '<div class="translation">' + groupedEntry.definition + '</div>'
 							+ '</div>'
 						);
 					}

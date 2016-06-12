@@ -188,6 +188,7 @@
 	width:100%;
 	overflow-x:hidden;
 	overflow-y:auto;
+	font-family:'Honoka Antique-Maru';
 }
 
 	.sidebar .dictionary .item
@@ -195,6 +196,22 @@
 		padding:1em;
 		width:100%;
 		border-bottom:1px solid black;
+	}
+	
+	.sidebar .dictionary .item .kanji
+	{
+		font-size:1.4em;
+	}
+	
+	.sidebar .dictionary .item .inflection
+	{
+		font-size:0.6em;
+		color:red;
+	}
+	
+	.sidebar .dictionary .item .translation
+	{
+		font-size:0.8em;
 	}
 	
 	.sidebar .dictionary .item.heading
