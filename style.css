@@ -99,8 +99,6 @@
 
 .sidebar .score
 {
-	/*position:absolute;
-	top:0;*/
 	width:100%;
 	height:8%;
 	font-size:1.6em;
@@ -109,8 +107,6 @@
 	line-height:0;
 	padding-top:0.6em;
 	color:yellow;
-	/*border:2px solid #c6bb84;
-	background: #eadea1;*/
 	background-size:100% 100%;
 	background-image:url('gui/score.png');
 }
@@ -144,7 +140,6 @@
 {
 	position:absolute;
 	top:5%;
-	/*padding-top:0.2em;*/
 	width:100%;
 	font-size:1.2em;
 }
@@ -153,8 +148,6 @@
 {
 	position: absolute;
 	bottom:4%;
-	/*padding:5%;*/
-	/*border-top:1px solid black;*/
 	min-height:1em;
 	width: 100%;
 }
@@ -236,7 +229,6 @@
 {
 	width:14.28%;
 	display:inline-block;
-	/*border:1px solid black;*/
 	vertical-align:bottom;
 }
 
@@ -244,7 +236,6 @@
 {
 	width:100%;
 	height:7.24%;
-	/*border:1px solid red;*/
 	background-size:100% 100%;
 	
 	display:inline-block;
@@ -265,7 +256,21 @@
 	{
 		background-image:url('spacers/fourth.png');
 	}
-	
+
+@keyframes burning {
+	0% {opacity:0.05}
+	25% {opacity:0.30}
+	35% {opacity:0.30}
+	100% {opacity:0.05}
+}
+
+@keyframes light-burning {
+	0% {opacity:0}
+	25% {opacity:0.30}
+	35% {opacity:0.30}
+	100% {opacity:0}
+}
+
 .tile
 {
 	background-size:100% 100%;
@@ -273,10 +278,54 @@
 	display:inline-block;
 	height:12.5%;
 	width:100%;
-	/*padding:25%;*/
 	cursor: default;
 	position:relative;
 }
+	.tile.flame, .tile.flame.selected
+	{
+		background-image:url('tiles/flame3.png');
+			text-shadow:
+			-1px -1px 0 #ffaaaa,
+			1px -1px 0 #ffaaaa,
+			-1px 1px 0 #ffaaaa,
+			1px 1px 0 #ffaaaa; 
+	}
+		.tile.flame.selected .overlay
+		{
+			background:#ff8888;
+			display:block;
+			opacity:0.35;
+		}
+	
+	
+	.tile.burning
+	{
+	}
+		.tile.burning .overlay
+		{
+			background:red;
+			display:block;
+			animation-name: burning;
+			animation-duration: 2s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+			-moz-animation-name: burning;
+			-moz-animation-duration: 2s;
+			-moz-animation-iteration-count: infinite;
+			-moz-animation-timing-function: linear;
+		}
+		
+		.tile.burning.selected .overlay
+		{
+			background:#ff8888;
+			animation-name: light-burning;
+			-moz-animation-name: light-burning;
+		}
+		
+		.tile.burning.selected
+		{
+		}
+	
 	.tile.selected
 	{
 		background-image:url('tiles/default-selected.png');
@@ -285,12 +334,18 @@
 		{
 			color: white;
 		}
+		
+		.tile.selected .overlay
+		{
+		}
+		
 	.tile.valid
 	{
 		cursor: pointer;
 	}
 	.tile .letter
 	{
+		z-index:2;
 		position: absolute;
 		font-family: 'Montserrat', sans-serif;
 		text-transform: capitalize;
@@ -302,73 +357,84 @@
 		font-size:1.6em;
 	}
 
-
-.tile .arrow
-{
-	position:absolute;
-	z-index:5;
-	background-size:100% 100%;
-	width:33%;
-	height:33%;
-}
-.tile .arrow.up
-{
-	background-image:url('arrows/up.png');
-	top:-16%;
-	left:33%;
-}
-.tile .arrow.down
-{
-	background-image:url('arrows/down.png');
-	bottom:-16%;
-	left:33%;
-}
-.tile .arrow.up-right
-{
-	background-image:url('arrows/up-right.png');
-	top:8%;
-	right:-16%;
-}
-.tile .arrow.down-right
-{
-	background-image:url('arrows/down-right.png');
-	bottom:8%;
-	right:-16%;
-}
-.tile .arrow.up-left
-{
-	background-image:url('arrows/up-left.png');
-	top:8%;
-	left:-16%;
-}
-.tile .arrow.down-left
-{
-	background-image:url('arrows/down-left.png');
-	bottom:8%;
-	left:-16%;
-}
-.tile .point-indicator
-{
-	position:absolute;
-	bottom:8%;
-	right:8%;
-	background-size:100% 100%;
-	height:20%;
-	width:20%;
-}
-	.tile .point-indicator.type-0
+	.tile .overlay
 	{
+		position: absolute;
+		top:0;
+		left:0;
+		height:100%;
+		width:100%;
 		display:none;
 	}
-	.tile .point-indicator.type-1
+
+	.tile .arrow
 	{
-		background-image:url('tiles/point-1.png');
+		position:absolute;
+		z-index:5;
+		background-size:100% 100%;
+		width:33%;
+		height:33%;
 	}
-	.tile .point-indicator.type-2
+		.tile .arrow.up
+		{
+			background-image:url('arrows/up.png');
+			top:-16%;
+			left:33%;
+		}
+		.tile .arrow.down
+		{
+			background-image:url('arrows/down.png');
+			bottom:-16%;
+			left:33%;
+		}
+		.tile .arrow.up-right
+		{
+			background-image:url('arrows/up-right.png');
+			top:8%;
+			right:-16%;
+		}
+		.tile .arrow.down-right
+		{
+			background-image:url('arrows/down-right.png');
+			bottom:8%;
+			right:-16%;
+		}
+		.tile .arrow.up-left
+		{
+			background-image:url('arrows/up-left.png');
+			top:8%;
+			left:-16%;
+		}
+		.tile .arrow.down-left
+		{
+			background-image:url('arrows/down-left.png');
+			bottom:8%;
+			left:-16%;
+		}
+	
+	.tile .point-indicator
 	{
-		background-image:url('tiles/point-2.png');
+		z-index:2;
+		position:absolute;
+		bottom:8%;
+		right:8%;
+		background-size:100% 100%;
+		height:20%;
+		width:20%;
 	}
-	.tile .point-indicator.type-3
-	{
-		background-image:url('tiles/point-3.png');
-	}
+		.tile .point-indicator.type-0
+		{
+			display:none;
+		}
+		.tile .point-indicator.type-1
+		{
+			background-image:url('tiles/point-1.png');
+		}
+		.tile .point-indicator.type-2
+		{
+			background-image:url('tiles/point-2.png');
+		}
+		.tile .point-indicator.type-3
+		{
+			background-image:url('tiles/point-3.png');
+		}
