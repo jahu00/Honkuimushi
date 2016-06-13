@@ -48,7 +48,8 @@
 			
 			var constants = {
 				width: 7,
-				height: 7
+				height: 7,
+				minLength: 3
 			}
 			
 			/*var levels = [3000];
@@ -64,6 +65,7 @@
 			var level = 1;
 			var nextLevel = 3000;
 			var lastLevel = 0;
+			var flameChance = 0;
 			function lastLetter()
 			{
 				return word[word.length - 1];
@@ -112,16 +114,37 @@
 							spacerType = (n / 2) + 1;
 						}
 						newColumn.find('.spacer').addClass('type-' + spacerType);
-						newColumn.attr('data-column', n);
+						newColumn.attr('data-column', n - 1);
 						board.append(newColumn);
 					}
 				}
 				
+				function gameOver()
+				{
+					alert("You lose!");
+				}
+				
 				function updateColumns()
 				{
+					$('.board .tile.flame').each(function()
+					{
+						var tile = $(this);
+						var row = parseInt(tile.attr('data-row'));
+						var column = parseInt(tile.attr('data-column'));
+						console.log(row, (constants.height - 1 + column % 2));
+						if (row == (constants.height - 1 + column % 2))
+						{
+							gameOver();
+							return;
+						}
+					});
+					
 					$('.board .column').each(function()
 					{
 						var column = $(this);
+						
+						column.find('.tile.burning').remove();
+						
 						var columnId = column.attr('data-column');
 						var tileCount = column.find('.tile').length;
 						
@@ -139,6 +162,10 @@
 							newTile.attr('data-multiplier', 1);
 							newTile.find('.letter').html(letter.letter);
 							newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
+							if (Math.random() < flameChance)
+							{
+								newTile.addClass("flame");
+							}
 							column.prepend(newTile);
 						}
 						
@@ -148,6 +175,13 @@
 							var tile = $(this);
 							tile.attr('data-row', tileCount);
 							tile.attr('data-column', columnId);
+							if (tile.hasClass("flame"))
+							{	var nextTile = tile.next();
+								if (!nextTile.hasClass("flame"))
+								{
+									nextTile.addClass('burning');
+								}
+							}
 							tileCount++;
 						});
 					});
@@ -238,7 +272,7 @@
 					isValidWord = false;
 					dictionaryEntries = null;
 					updatePoints("");
-					if (letters.length > 2 && !(/[a-z]/i).test(kana))
+					if (letters.length >= constants.minLength && !(/[a-z]/i).test(kana))
 					{
 						var search = rikaikun.wordSearch(kana, false, 15);
 						if (search != null && search.data.length > 0)
@@ -314,6 +348,20 @@
 					}
 				}
 				
+				function computeFlameChance(word)
+				{
+					var _level = level;
+					flameChance = (19 + _level) / Math.pow(10, word.length - 1);
+					if (flameChance > 1)
+					{
+						flameChance = 1;
+					}
+					if (flameChance < 0)
+					{
+						flameChance = 0;
+					}
+				}
+				
 				function confirm()
 				{
 					if (!isValidWord)
@@ -325,6 +373,7 @@
 					fillDictionary(dictionaryEntries, kana);
 					score += points;
 					updateScore(score);
+					computeFlameChance(_word);
 					for(var i = 0; i < _word.length; i++)
 					{
 						$(_word[i]).remove();
@@ -343,9 +392,8 @@
 						lastLevel = nextLevel;
 						nextLevel = nextLevel + 3000 + (level - 1) * 1000;
 						$('.sidebar .level-indicator .level').html(level);
-						$('.sidebar .progress .bar').css('transition', 0);
+						$('.sidebar .progress .bar').css('right', '0');
 						$('.sidebar .progress .bar').css('right', '100%');
-						$('.sidebar .progress .bar').css('transition', null);
 					}
 					$('.sidebar .progress .bar').css('right', (100 - (100 * (points - lastLevel) / (nextLevel - lastLevel))) + '%');
 				}
@@ -395,14 +443,14 @@
 									Math.abs(currentColumn - lastColumn) == 1
 									&&
 									(
-										currentColumn % 2 == 1
+										currentColumn % 2 == 0
 										&& 
 										(
 											currentRow > lastRow
 											|| currentRow - lastRow < -1
 										)
 										||
-										currentColumn % 2 == 0
+										currentColumn % 2 == 1
 										&& 
 										(
 											currentRow < lastRow
@@ -466,6 +514,7 @@
 					level = 1;
 					nextLevel = 3000;
 					lastLevel = 0;
+					var flameChance = 0;
 					clearBoard();
 					updateColumns();
 					updateWord();
