@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="js/preloadStyleImages.js"></script>
 		<script type="text/javascript" src="rikaikun/data.js"></script>
 		<script type="text/javascript" src="wordFrequency.js"></script>
+		<script type="text/javascript" src="app.js"></script>
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/bokutachi-no-gothic-2/bokutachi-no-gothic-2.css">
@@ -26,37 +27,38 @@
 			<div class="arrow"></div>
 		</div>
 		<div id="Container">
-		<div class="game screen">
-			<div class="sidebar unselectable">
-				<div class="score outline">0</div>
-				<div class="word-container">
-					<div class="word"></div>
-					<div class="points"></div>
-					<div class="level-indicator">Level <span class="level">1</span></div>
-				</div>
-				<div class="button outline submit"> Submit</div>
-				<div class="progress"><div class="bar"></div></div>
-				<div class="dictionary">
+			<div class="loading screen">
+				<div class="progress">
+				<div class="bar"></div>
 				</div>
 			</div>
-			<div class="board">
+			<div class="game screen">
+				<div class="sidebar unselectable">
+					<div class="score outline">0</div>
+					<div class="word-container">
+						<div class="word"></div>
+						<div class="points"></div>
+						<div class="level-indicator">Level <span class="level">1</span></div>
+					</div>
+					<div class="button outline submit">Submit</div>
+					<div class="progress"><div class="bar"></div></div>
+					<div class="button outline shuffle">Shuffle</div>
+					<div class="dictionary">
+					</div>
+				</div>
+				<div class="board">
+				</div>
 			</div>
 		</div>
 		<script>
-			var rikaikun = new rcxDict(false);
-			var wordFrequency = new WordFrequency();
+			/*var rikaikun = null; //new rcxDict(false);
+			var wordFrequency = null; //new WordFrequency();*/
 			
 			var constants = {
 				width: 7,
 				height: 7,
 				minLength: 3
 			}
-			
-			/*var levels = [3000];
-			for(var i = 1; i < 10; i++)
-			{
-			  levels.push(levels[i-1] + levels[0] + i * 1000);
-			}*/
 			
 			var word = [];
 			var dictionaryEntries = null;
@@ -92,6 +94,9 @@
 			
 			$(function()
 			{
+				//var app = new App();
+				window.app = new App();
+			
 				var tileTemplate = $('.templates .tile');
 				var oddColumnTemplate = $('.templates .column.odd');
 				var evenColumnTemplate = $('.templates .column.even');
@@ -119,13 +124,25 @@
 					}
 				}
 				
-				function gameOver()
+				function processGameOver()
 				{
 					alert("You lose!");
 				}
 				
+				function createTile(letter)
+				{
+					var newTile = tileTemplate.clone();
+					newTile.attr('data-letter', letter.letter);
+					newTile.attr('data-points', letter.points);
+					newTile.attr('data-multiplier', 1);
+					newTile.find('.letter').html(letter.letter);
+					newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
+					return newTile;
+				}
+				
 				function updateColumns()
 				{
+					var gameOver = false;
 					$('.board .tile.flame').each(function()
 					{
 						var tile = $(this);
@@ -134,8 +151,7 @@
 						console.log(row, (constants.height - 1 + column % 2));
 						if (row == (constants.height - 1 + column % 2))
 						{
-							gameOver();
-							return;
+							gameOver = true;
 						}
 					});
 					
@@ -155,13 +171,8 @@
 						}
 						for(var i = 0; i < targetCount - tileCount; i++)
 						{
-							var newTile = tileTemplate.clone();
 							var letter = randomLetter();
-							newTile.attr('data-letter', letter.letter);
-							newTile.attr('data-points', letter.points);
-							newTile.attr('data-multiplier', 1);
-							newTile.find('.letter').html(letter.letter);
-							newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
+							var newTile = createTile(letter);
 							if (Math.random() < flameChance)
 							{
 								newTile.addClass("flame");
@@ -185,6 +196,11 @@
 							tileCount++;
 						});
 					});
+					
+					if (gameOver)
+					{
+						processGameOver();
+					}
 				}
 				
 				function fillDictionary(entries, kana)
@@ -346,6 +362,30 @@
 						$(letter).removeClass('valid');
 						removeArrow(letter);
 					}
+				}
+				
+				function shuffle()
+				{
+					flameChance = 0;
+					var shuffleFlameChance = (19 + level) / Math.pow(10, 2);
+					var _word = word;
+					deselect(_word.splice(0, _word.length));
+					updateWord();
+					$('.board .tile:not(.flame):not(.burning)').each(function()
+					{
+						var oldTile = $(this);
+						var letter = randomLetter();
+						var newTile = createTile(letter);
+						newTile.attr("data-row", oldTile.attr("data-row"));
+						newTile.attr("data-column", oldTile.attr("data-column"));
+						if (newTile.attr("data-row") == 0 && Math.random() < shuffleFlameChance)
+						{
+							newTile.addClass("flame");
+							console.log(oldTile, newTile);
+						}
+						oldTile.replaceWith(newTile);
+					});
+					updateColumns();
 				}
 				
 				function computeFlameChance(word)
@@ -521,17 +561,17 @@
 					updateScore(score);
 				}
 				
-				function init()
+				//function init()
+				window.init = function()
 				{
 					preloadStyleImages.preload();
 					createColumns();
-					//updateColumns();
 					$('.board').on('click', '.tile', tileHandler);
 					$('.sidebar').on('click', '.submit', confirm);
+					$('.sidebar').on('click', '.shuffle', shuffle);
 					newGame();
 				}
 				
-				init();
 			});
 		</script>
 	</body>

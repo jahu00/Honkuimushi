@@ -39,10 +39,16 @@
 
 */
 
-function rcxDict(loadNames) {
+function rcxDict(loadNames, onready, onupdate) {
+	//console.log("rikai constructor is run");
 	//this.edictPath = localStorage['edictPath'] || '';
 	this.edictPath = './rikaikun/data/';
+	this.requestQueue = [];
 	this.fileRequests = [];
+	this.updateCallback = onready || undefined;
+	this.readyCallback = onupdate || undefined;
+	this.totalRequests = 0;
+	this.requestsCompleted = 0;
 	this.loadDictionary();
 	if (loadNames) this.loadNames();
 	this.loadDIF();
@@ -55,64 +61,50 @@ rcxDict.prototype = {
 		this.config = c;
 	},
 
-	ready: function()
+	isReady: function()
 	{
-		if (this.fileRequests.length == 0)
+		if (this.fileRequests.length == 0 && this.requestQueue == 0)
 		{
 			return true;
 		}
 		return false;
 	},
+	processNextFileRequest: function()
+	{
+		var self = this;
+		if (self.requestQueue.length > 0 && self.fileRequests.length == 0)
+		{
+			var request = self.requestQueue.splice(0, 1)[0];
+			self.fileRequests.push(request);
+			$.get(request.url, function(data)
+			{
+				request.callback(data);
+				self.fileRequests.splice(self.fileRequests.indexOf(request), 1);
+				self.requestsCompleted++;
+				if (typeof self.updateCallback !== 'undefined')
+				{
+					self.updateCallback();
+				}
+				if (self.isReady())
+				{
+					if (typeof self.readyCallback !== 'undefined')
+					{
+						self.readyCallback();
+					}
+				}
+				else
+				{
+					self.processNextFileRequest();
+				}
+			}, "html");			
+		}
+	},
 	fileReadAsync: function(url, callback, charset)
 	{
-		/*if (typeof window.requestFileSystem !== 'undefined')
-		{
-			//window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs)
-			window.resolveLocalFileSystemURL(this.edictPath, function(dir)
-			{
-				dir.getFile(url, null, function(entry)
-				{
-					//console.log(entry);
-					entry.file(function(f){
-						console.log(f);
-						var reader = new FileReader();
-						reader.onloadend = function (evt) {
-							//alert('done');
-							callback(evt.target.result)
-						};
-						reader.onerror = function(error)
-						{
-							console.log('File reader error:' + JSON.stringify(error));
-						};
-						reader.readAsText(f);
-					});
-				}
-				,function(error)
-				{
-					console.log('File entry error:' + JSON.stringify(error));
-				});
-				//console.log(dir);
-			},function(error)
-			{
-				console.log('File system error:' + JSON.stringify(error));
-			});
-		}
-		else
-		{*/
-			this.fileRequests.push(url);
-			//console.log('start', url);
-			var self = this;
-			$.get(this.edictPath + url, function(data)
-			{
-				callback(data);
-				self.fileRequests.splice(self.fileRequests.indexOf(url), 1);
-				//console.log('stop', url, self.ready());
-				if (self.ready() && typeof self.readyCallback !== 'undefined')
-				{
-					self.readyCallback();
-				}
-			}, "html");
-		//}
+		var self = this;
+		self.requestQueue.push({url: (self.edictPath + url), callback: callback, charset: charset});
+		self.totalRequests++;
+		self.processNextFileRequest();
 	},
 	fileRead: function(url, charset) {
 		var req = new XMLHttpRequest();
