@@ -50,6 +50,7 @@
 					<div class="button outline shuffle">Shuffle</div>
 					<div class="dictionary">
 					</div>
+					<div class="button outline menu">Menu</div>
 				</div>
 				<div class="board">
 				</div>
@@ -147,7 +148,6 @@
 						var tile = $(this);
 						var row = parseInt(tile.attr('data-row'));
 						var column = parseInt(tile.attr('data-column'));
-						console.log(row, (constants.height - 1 + column % 2));
 						if (row == (constants.height - 1 + column % 2))
 						{
 							gameOver = true;
@@ -158,7 +158,19 @@
 					{
 						var column = $(this);
 						
-						column.find('.tile.burning').remove();
+						column.find('.tile.burning').each(function()
+						{
+							var tile = $(this);
+							var previousTile = tile.prev();
+							if (previousTile.length > 0 && previousTile.hasClass("flame"))
+							{
+								tile.remove();
+							}
+							else
+							{
+								tile.removeClass("burning");
+							}
+						});
 						
 						var columnId = column.attr('data-column');
 						var tileCount = column.find('.tile').length;
@@ -287,6 +299,7 @@
 					isValidWord = false;
 					dictionaryEntries = null;
 					updatePoints("");
+					$('.sidebar .submit').removeClass("highlight");
 					if (letters.length >= constants.minLength && !(/[a-z]/i).test(kana))
 					{
 						var search = rikaikun.wordSearch(kana, false, 15);
@@ -299,6 +312,7 @@
 					if (isValidWord)
 					{
 						$(lastLetter()).addClass('valid');
+						$('.sidebar .submit').addClass("highlight");
 						var _points = 0;
 						var multiplier = 0;
 						for(var i = 0; i < letters.length; i++)
