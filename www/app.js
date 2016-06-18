@@ -2,6 +2,7 @@ var App = function()
 {
 	var self = this;
 	self.container = $('#Container');
+	self.menu = new Menu(self);
 	$(window).resize(function()
 	{
 		self.screenResize(true);
@@ -21,6 +22,7 @@ App.prototype = {
 		var projectedHeight = _constants.baseHeight * scale;
 		var projectedWidth = windowWidth;
 		var verticalOffset = parseInt((windowHeight - projectedHeight) / 2);
+		$(document.body).removeClass("vertical");
 		if (projectedHeight > windowHeight)
 		{
 			//Adjust to window height
@@ -28,6 +30,10 @@ App.prototype = {
 			projectedHeight = windowHeight;
 			projectedWidth = scale * _constants.baseWidth;
 			verticalOffset = 0;
+		}
+		else
+		{
+			$(document.body).addClass("vertical");
 		}
 		
 		// Adjust to window width
@@ -46,7 +52,8 @@ App.prototype = {
 		window.rikaikun = this.dictionary;
 		window.wordFrequency = this.wordFrequency;
 		window.init();
-		this.switchScreen("game");
+		//this.switchScreen("game");
+		this.switchScreen("menu");
 	},
 	loadingUpdate: function()
 	{

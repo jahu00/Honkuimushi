@@ -45,8 +45,8 @@ function rcxDict(loadNames, onready, onupdate) {
 	this.edictPath = './rikaikun/data/';
 	this.requestQueue = [];
 	this.fileRequests = [];
-	this.updateCallback = onready || undefined;
-	this.readyCallback = onupdate || undefined;
+	this.updateCallback = onupdate || undefined;
+	this.readyCallback =  onready || undefined;
 	this.totalRequests = 0;
 	this.requestsCompleted = 0;
 	this.loadDictionary();

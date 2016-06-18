@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="toKana.js"></script>
 		<script type="text/javascript" src="rikaikun/data.js"></script>
 		<script type="text/javascript" src="wordFrequency.js"></script>
+		<script type="text/javascript" src="menu.js"></script>
 		<script type="text/javascript" src="app.js"></script>
 		<link type="text/css" rel="stylesheet" media="screen" href="style.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/montserrat/montserrat.css">
@@ -35,6 +36,16 @@
 			<div class="loading screen">
 				<div class="progress">
 				<div class="bar"></div>
+				</div>
+			</div>
+			<div class="menu screen">
+				<div class="logo"></div>
+				<div class="buttons">
+					<div class="button resume-game" style="display:none">Resume game</div>
+					<div class="button new-game">New game</div>
+					<!--<div class="button options">Options</div>-->
+					<!--<div class="button hall-of-fame">Hall of fame</div>-->
+					<!--<div class="button exit">Exit</div>-->
 				</div>
 			</div>
 			<div class="game screen">
@@ -558,7 +569,7 @@
 					$('.game .board .tile').remove();
 				}
 				
-				function newGame()
+				window.newGame = function()
 				{
 					word = [];
 					dictionaryEntries = null;
@@ -567,11 +578,13 @@
 					level = 1;
 					nextLevel = 3000;
 					lastLevel = 0;
-					var flameChance = 0;
+					flameChance = 0;
 					clearBoard();
 					updateColumns();
 					updateWord();
 					updateScore(score);
+					//emptyDictionary
+					$('.dictionary').html("");
 				}
 				
 				//function init()
@@ -582,7 +595,11 @@
 					$('.board').on('click', '.tile', tileHandler);
 					$('.sidebar').on('click', '.submit', confirm);
 					$('.sidebar').on('click', '.shuffle', shuffle);
-					newGame();
+					$('.sidebar').on('click', '.menu', function()
+					{
+						app.switchScreen("menu");
+					});
+					/*newGame();*/
 				}
 				
 			});
