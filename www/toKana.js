@@ -122,7 +122,7 @@ ToKana.romajiToKanaMapping = {
 	nnya: 'んや',
 	nnyu: 'んゆ',
 	nnyo: 'んよ',
-	n: 'ん',
+	n: 'ん'
 };
 ToKana.fromRomaji = function(text, watchdog)
 {
@@ -148,18 +148,18 @@ ToKana.fromRomaji = function(text, watchdog)
 	{
 		if (this.romajiToKanaMapping.hasOwnProperty(key))
 		{
-			if(text.startsWith(key))
+			if(text.indexOf(key) == 0)
 			{
 				romaji = key;
 				result = this.romajiToKanaMapping[key];
 				break;
 			}
-			if (this.longConsonants.indexOf(key[0]) > -1 && text.startsWith(key[0] + key))
+			if (this.longConsonants.indexOf(key[0]) > -1 && text.indexOf(key[0] + key) == 0)
 			{
 				romaji = key[0] + key;
 				result = "っ" + this.romajiToKanaMapping[key];
 				break;
-			} else if (key == "cha" && text.startsWith(key + key))
+			} else if (key == "cha" && text.indexOf(key + key) == 0)
 			{
 				romaji = key + key;
 				result = "っ" + this.romajiToKanaMapping[key];

@@ -13,6 +13,13 @@ html, body
 		background-image:url('gui/background.jpg');
 		background-size:auto 100%;
 		background-position:50% 50%;
+		
+		/* Turn off touch highlight */
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-tap-highlight-color: transparent;
+		/* block copy&paste on android */
+		-webkit-touch-callout: none;
+		/*-webkit-user-select: none;*/
 	}
 
 	body.vertical
@@ -197,12 +204,22 @@ html, body
 	75% {color:#ACFF00;}
 }
 
+@-webkit-keyframes blink {
+	25% {color:#ACFF00;}
+	50% {color:lime;}
+	75% {color:#ACFF00;}
+}
+
 .sidebar .button.highlight:not(:active)
 {
 	animation-name: blink;
 	animation-duration: 2s;
 	animation-iteration-count: infinite;
 	animation-timing-function: linear;
+	-webkit-animation-name: blink;
+	-webkit-animation-duration: 2s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
 }
 
 .sidebar .button:hover

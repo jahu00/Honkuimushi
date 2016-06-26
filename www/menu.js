@@ -16,6 +16,6 @@ function Menu(app)
 	});
 }
 
-menu.prototype = {
+Menu.prototype = {
 	
 };

@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="letters.js"></script>
 		<script type="text/javascript" src="js/fileHelpers.js"></script>
 		<script type="text/javascript" src="js/preloadStyleImages.js"></script>
+		<script type="text/javascript" src="js/fastclick/fastclick.js"></script>
 		<script type="text/javascript" src="toKana.js"></script>
 		<script type="text/javascript" src="rikaikun/data.js"></script>
 		<script type="text/javascript" src="wordFrequency.js"></script>
@@ -354,7 +355,8 @@
 				{
 					var value = "";
 					var _word = word;
-					var kana = wordToKana(_word);
+					var kana = "";
+					kana = wordToKana(_word);
 					if (kana.length == 0)
 					{
 						$('.sidebar .level-indicator').show();
@@ -405,7 +407,6 @@
 						if (newTile.attr("data-row") == 0 && Math.random() < shuffleFlameChance)
 						{
 							newTile.addClass("flame");
-							console.log(oldTile, newTile);
 						}
 						oldTile.replaceWith(newTile);
 					});
@@ -444,6 +445,7 @@
 					}
 					_word.splice(0, _word.length);
 					updateColumns();
+					updateWord();
 				}
 				
 				function updateScore(points)

@@ -1,5 +1,8 @@
 var App = function()
 {
+	
+	FastClick.attach(document.body);
+	
 	var self = this;
 	self.container = $('#Container');
 	self.menu = new Menu(self);
