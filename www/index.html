@@ -22,7 +22,7 @@
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/honoka-antique-maru/honoka-antique-maru.css">
 		<link type="text/css" rel="stylesheet" media="screen" href="fonts/sigmar-one/sigmar-one.css">
 	</head>
-	<body>
+	<body class="unselectable">
 		<div class="templates" style="display:none">
 			<div class="tile">
 				<div class="overlay"></div>
@@ -33,7 +33,7 @@
 			<div class="column even"></div>
 			<div class="arrow"></div>
 		</div>
-		<div id="Container" class="unselectable">
+		<div id="Container" class="gpu">
 			<div class="loading screen">
 				<div class="progress">
 				<div class="bar"></div>
@@ -457,10 +457,10 @@
 						level++;
 						lastLevel = nextLevel;
 						nextLevel = nextLevel + 3000 + (level - 1) * 1000;
-						$('.sidebar .level-indicator .level').html(level);
 						$('.sidebar .progress .bar').css('right', '0');
 						$('.sidebar .progress .bar').css('right', '100%');
 					}
+					$('.sidebar .level-indicator .level').html(level);
 					$('.sidebar .progress .bar').css('right', (100 - (100 * (points - lastLevel) / (nextLevel - lastLevel))) + '%');
 				}
 				

@@ -41,6 +41,11 @@ html, body
 	user-select: none;
 }
 
+.gpu
+{
+	-webkit-transform: translateZ(0);
+}
+
 .outline
 {
 	text-shadow:
