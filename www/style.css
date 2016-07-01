@@ -21,6 +21,7 @@ html, body
 		-webkit-touch-callout: none;
 		/*-webkit-user-select: none;*/
 	}
+	}
 
 	body.vertical
 	{
@@ -44,6 +45,17 @@ html, body
 .gpu
 {
 	-webkit-transform: translateZ(0);
+}
+
+.gray-out
+{
+	position: absolute;
+	height:100%;
+	width:100%;
+	background:black;
+	opacity:0.4;
+	z-index:1;
+	display:none;
 }
 
 .outline
@@ -95,6 +107,69 @@ html, body
 	text-align:left;
 	overflow: hidden;
 }
+
+.popup
+{
+	position:absolute;
+	top:30%;
+	left:20%;
+	background:#eeeedd;
+	border: 1px solid black;
+	border-radius: 0.3em;
+	width:60%;
+	height:40%;
+	z-index: 10;
+	display:none;
+}
+
+	.popup .header
+	{
+		text-align:center;
+		font-family:'Sigmar One';
+		font-size:2em;
+		color:black;
+	}
+	
+	.popup .header
+	{
+		text-align:center;
+		font-family:'Sigmar One';
+		font-size:2em;
+		color:black;
+	}
+	
+	.popup .actions
+	{
+		text-align:center;
+		font-family:'Sigmar One';
+		font-size:1.2em;
+	}
+	
+	.popup .actions > .button
+	{
+		color:orange;
+		cursor:pointer;
+	}
+	
+	.popup .actions > .button:hover
+	{
+		color:yellow;
+	}
+	
+	.popup .header > *, .popup .actions > *
+	{
+		display: none;
+	}
+
+	.popup.game-over .on-game-over
+	{
+		display:inline-block;
+	}
+
+	.popup.level-up .on-level-up
+	{
+		display:inline-block;
+	}
 
 .screen.loading
 {
@@ -453,10 +528,15 @@ html, body
 	{
 		background-image:url('tiles/burnt.png');
 		color: gray;
+		text-shadow: none !important;
 	}
 		.tile.burnt .point-indicator
 		{
 			display: none;
+		}
+		.tile.burnt .overlay
+		{
+			display: none !important;
 		}
 	
 	.tile.burning

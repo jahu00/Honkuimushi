@@ -68,5 +68,13 @@ App.prototype = {
 		{
 			this.loadingComplete();
 		}
+	},
+	grayOut: function()
+	{
+		$(document.body).find('.gray-out').show();
+	},
+	grayIn: function()
+	{
+		$(document.body).find('.gray-out').hide();
 	}
 };
