@@ -1,21 +1,41 @@
 var App = function()
 {
-	
 	FastClick.attach(document.body);
+	preloadStyleImages.preload();
 	
 	var self = this;
 	self.container = $('#Container');
+	self.templates = $('#Templates')
 	self.menu = new Menu(self);
+	self.game = new Game(self);
+	
 	$(window).resize(function()
 	{
 		self.screenResize(true);
 	}).resize();
+	
+	this.initPopup();
+	
 	self.appState = "Loading";
 	self.switchScreen("loading");
 	self.dictionary = new rcxDict(false, null, function() {self.loadingUpdate() });
 	self.wordFrequency = new WordFrequency(function() {self.loadingUpdate() });
 }
 App.prototype = {
+	initPopup: function()
+	{
+		var self = this;
+		self.container.children('.popup').find('.actions .button').click(function()
+		{
+			var action = $(this);
+			self.grayIn();
+			action.closest('.popup').hide();
+			if (action.hasClass("menu"))
+			{
+				self.switchScreen("menu");
+			}
+		});
+	},
 	screenResize: function()
 	{
 		var _constants = constants;
@@ -52,9 +72,9 @@ App.prototype = {
 	},
 	loadingComplete: function()
 	{
-		window.rikaikun = this.dictionary;
+		/*window.rikaikun = this.dictionary;
 		window.wordFrequency = this.wordFrequency;
-		window.init();
+		window.init();*/
 		//this.switchScreen("game");
 		this.switchScreen("menu");
 	},

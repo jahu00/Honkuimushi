@@ -5,9 +5,8 @@ function Menu(app)
 	self.screen = app.container.find('.screen.menu');
 	self.screen.find('.button.new-game').click(function()
 	{
-		window.newGame();
+		self.app.game.newGame();
 		self.app.switchScreen("game");
-		self.screen.find('.button.resume-game').show();
 	});
 	
 	self.screen.find('.button.resume-game').click(function()
@@ -17,5 +16,12 @@ function Menu(app)
 }
 
 Menu.prototype = {
-	
+	hideResumeButton: function()
+	{
+		this.screen.find('.button.resume-game').hide();
+	},
+	showResumeButton: function()
+	{
+		this.screen.find('.button.resume-game').show();
+	}
 };
