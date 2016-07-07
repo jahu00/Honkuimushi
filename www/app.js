@@ -14,28 +14,12 @@ var App = function()
 		self.screenResize(true);
 	}).resize();
 	
-	this.initPopup();
-	
 	self.appState = "Loading";
 	self.switchScreen("loading");
 	self.dictionary = new rcxDict(false, null, function() {self.loadingUpdate() });
 	self.wordFrequency = new WordFrequency(function() {self.loadingUpdate() });
 }
 App.prototype = {
-	initPopup: function()
-	{
-		var self = this;
-		self.container.children('.popup').find('.actions .button').click(function()
-		{
-			var action = $(this);
-			self.grayIn();
-			action.closest('.popup').hide();
-			if (action.hasClass("menu"))
-			{
-				self.switchScreen("menu");
-			}
-		});
-	},
 	screenResize: function()
 	{
 		var _constants = constants;
@@ -88,13 +72,5 @@ App.prototype = {
 		{
 			this.loadingComplete();
 		}
-	},
-	grayOut: function()
-	{
-		$(document.body).find('.gray-out').show();
-	},
-	grayIn: function()
-	{
-		$(document.body).find('.gray-out').hide();
 	}
 };
