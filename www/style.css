@@ -131,14 +131,11 @@ html, body
 		color:black;
 	}
 	
-	.popup .header
-	{
-		text-align:center;
-		font-family:'Sigmar One';
-		font-size:2em;
-		color:black;
-	}
-	
+		.popup .header > *, .popup .actions > *
+		{
+			display: none;
+		}
+		
 	.popup .actions
 	{
 		text-align:center;
@@ -146,22 +143,17 @@ html, body
 		font-size:1.2em;
 	}
 	
-	.popup .actions > .button
-	{
-		color:orange;
-		cursor:pointer;
-	}
+		.popup .actions > .button
+		{
+			color:orange;
+			cursor:pointer;
+		}
+		
+		.popup .actions > .button:hover
+		{
+			color:yellow;
+		}
 	
-	.popup .actions > .button:hover
-	{
-		color:yellow;
-	}
-	
-	.popup .header > *, .popup .actions > *
-	{
-		display: none;
-	}
-
 	.popup.game-over .on-game-over
 	{
 		display:inline-block;
@@ -171,6 +163,41 @@ html, body
 	{
 		display:inline-block;
 	}
+
+	.popup .stats
+	{
+	}
+	
+		.popup .stats .stat
+		{
+			vertical-align:top;
+			display:inline-block;
+			width:50%;
+			text-align:center;
+			margin-right:-4px;
+		}
+		
+		.popup .stats .stat .label
+		{
+			font-family:'Sigmar One';
+			font-size:1em;
+			color:black;
+		}
+
+		.popup .stats .stat .word
+		{
+			font-family: 'Bokutachi no Gothic 2';
+			font-size:1.5em;
+			min-height:1.5em;
+			color:blue;
+		}
+		
+		.popup .stats .stat .points
+		{
+			font-family: "Honoka Antique-Maru";
+			font-size:0.8em;
+			color:black;
+		}
 
 .screen.loading
 {

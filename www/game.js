@@ -26,6 +26,8 @@ Game.prototype = {
 		this.lastLevel = 0;
 		this.flameChance = 0;
 		this.isValidWord = false;
+		this.bestWord = { points: 0, word: ""};
+		this.longestWord = "";
 	},
 	initBoard: function()
 	{
@@ -298,6 +300,15 @@ Game.prototype = {
 		var kana = this.wordToKana(word);
 		this.fillDictionary(this.dictionaryEntries, kana);
 		this.score += this.points;
+		if (this.longestWord.length < kana.length)
+		{
+			this.longestWord = kana;
+		}
+		if (this.bestWord.points < this.points)
+		{
+			this.bestWord.word = kana;
+			this.bestWord.points = this.points;
+		}
 		if (this.isLevelUp())
 		{
 			this.levelUp();

@@ -30,6 +30,10 @@ Popup.prototype = {
 	{
 		this.popup.removeClass("game-over level-up");
 		this.popup.addClass(type);
+		this.popup.find('.best-word .word').text(this.game.bestWord.word);
+		this.popup.find('.best-word .points').text(this.game.bestWord.points);
+		this.popup.find('.longest-word .word').text(this.game.longestWord);
+		this.popup.find('.longest-word .length').text(this.game.longestWord.length);
 		this.grayout.show();
 		this.popup.show();
 	}

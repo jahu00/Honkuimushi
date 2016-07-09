@@ -43,6 +43,18 @@
 					<span class="on-game-over">Game Over</span>
 					<span class="on-level-up">Level up!</span>
 				</div>
+				<div class="stats">
+					<div class="stat best-word">
+						<div class="label">Best Word</div>
+						<div class="word"></div>
+						<div class="points"></div>
+					</div>
+					<div class="stat longest-word">
+						<div class="label">Longest Word</div>
+						<div class="word"></div>
+						<div class="points">(<span class="length"></span> kana)</div>
+					</div>
+				</div>
 				<div class="actions outline">
 					<div class="button on-level-up continue">Continue</div>
 					<div class="button on-game-over menu">Menu</div>
@@ -85,7 +97,7 @@
 		<script>
 			$(function()
 			{
-				app = new App();
+				var app = new App();
 			});
 		</script>
 	</body>
