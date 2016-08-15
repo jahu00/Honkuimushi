@@ -531,6 +531,19 @@ html, body
 	cursor: default;
 	position:relative;
 }
+
+	.tile.green, .tile.green.selected
+	{
+		background-image:url('tiles/green.png');
+	}
+
+		.tile.green.selected:not(.burning) .overlay
+		{
+			background:#88ff88;
+			display:block;
+			opacity:0.35;
+		}
+	
 	.tile.flame, .tile.flame.selected
 	{
 		background-image:url('tiles/flame.png');

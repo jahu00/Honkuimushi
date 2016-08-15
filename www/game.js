@@ -28,6 +28,7 @@ Game.prototype = {
 		this.isValidWord = false;
 		this.bestWord = { points: 0, word: ""};
 		this.longestWord = "";
+		this.wordCounter = {};
 	},
 	initBoard: function()
 	{
@@ -83,6 +84,7 @@ Game.prototype = {
 		newTile.attr('data-letter', letter.letter);
 		newTile.attr('data-points', letter.points);
 		newTile.attr('data-bonus', 0);
+		newTile.attr('data-hp', 1);
 		newTile.find('.letter').html(letter.letter);
 		newTile.find('.point-indicator').addClass('type-' + parseInt(letter.points / 3));
 		return newTile;
@@ -297,6 +299,7 @@ Game.prototype = {
 			return;
 		}
 		var word = this.word;
+		var wordLength = word.length;
 		var kana = this.wordToKana(word);
 		this.fillDictionary(this.dictionaryEntries, kana);
 		this.score += this.points;
@@ -313,12 +316,35 @@ Game.prototype = {
 		{
 			this.levelUp();
 		}
+		this.wordCounter[wordLength] = this.wordCounter[wordLength] || 0;
+		this.wordCounter[wordLength]++;
+		
 		this.updateScore();
 		this.flameChance = this.computeFlameChance(word);
 		this.removeWordFromBoard(word);
 		this.clearWord(word);
 		this.updateColumns();
 		this.updateWord();
+		
+		if (wordLength >= 8 || wordLength > 3 && this.wordCounter[wordLength] % (8 - wordLength) == 0)
+		{
+			this.insertBonusTile("green");
+		}
+	},
+	insertBonusTile: function(tileType)
+	{
+		var availableTiles = this.board.find('.tile:not(.flame):not(.green)');
+		if (availableTiles.length > 0)
+		{
+			var tileId = Math.floor(Math.random() * availableTiles.length);
+			var tile = $(availableTiles[tileId]);
+			tile.addClass(tileType);
+			if (tileType == "green")
+			{
+				tile.attr("data-hp", 2);
+				tile.attr("data-bonus", 2);
+			}
+		}
 	},
 	shuffle: function()
 	{
@@ -361,7 +387,13 @@ Game.prototype = {
 				var previousTile = tile.prev();
 				if (previousTile.length > 0 && previousTile.hasClass("flame"))
 				{
-					tile.remove();
+					var tileHp = parseInt(tile.attr("data-hp"));
+					tileHp--;
+					tile.attr("data-hp", tileHp);
+					if (tileHp <= 0)
+					{
+						tile.remove();
+					}
 				}
 				else
 				{
